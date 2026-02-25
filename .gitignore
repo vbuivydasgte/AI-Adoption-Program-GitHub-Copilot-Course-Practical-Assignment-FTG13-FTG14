@@ -1,0 +1,51 @@
+# ------------------------------
+# .NET / C#
+# ------------------------------
+**/bin/
+**/obj/
+**/.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test / coverage outputs
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# ------------------------------
+# Frontend / Node (Vite)
+# ------------------------------
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+frontend/.eslintcache
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# ------------------------------
+# Environment & secrets
+# ------------------------------
+**/.env
+**/.env.*
+!**/.env.example
+**/secrets.json
+
+# Keep production appsettings tracked unless they contain secrets.
+# appsettings.Development is typically local-only.
+**/appsettings.Development.json
+
+# ------------------------------
+# IDE / OS
+# ------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db

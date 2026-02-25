@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/WarehouseManagement.Api/WarehouseManagement.Api.csproj" />
+    <Project Path="backend/WarehouseManagement.Application/WarehouseManagement.Application.csproj" />
+    <Project Path="backend/WarehouseManagement.Domain/WarehouseManagement.Domain.csproj" />
+    <Project Path="backend/WarehouseManagement.Infrastructure/WarehouseManagement.Infrastructure.csproj" />
+    <Project Path="backend/WarehouseManagement.Tests/WarehouseManagement.Tests.csproj" />
+  </Folder>
+</Solution>
