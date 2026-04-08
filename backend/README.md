@@ -16,7 +16,7 @@ ASP.NET Core Web API with Clean Architecture, Entity Framework Core, and JWT Aut
 - .NET 10 SDK or later
 - SQL Server or LocalDB
 
-### Database Setup
+### DB Setup
 
 1. Update connection string in `appsettings.json` if needed
 2. Create and apply migrations:
