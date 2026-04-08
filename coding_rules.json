@@ -1,7 +1,0 @@
-{
-  "max_line_length": 120,
-  "indentation": 2,
-  "naming": "camelCase",
-  "require_semicolons": true,
-  "max_function_length": 50
-}
