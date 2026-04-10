@@ -15,7 +15,8 @@ jobs:
         run: |
           $prompt = "Review PR #${{ github.event.pull_request.number }}: check the diff at origin/${{ github.head_ref }} for bugs, missing tests, and refactoring opportunities."
           $review = claude --print $prompt
-          gh pr comment ${{ github.event.pull_request.number }} --body $review
+          $review | Out-File -FilePath review.txt -Encoding utf8
+          gh pr comment ${{ github.event.pull_request.number }} --body-file review.txt
         shell: powershell
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
