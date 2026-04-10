@@ -8,14 +8,12 @@ jobs:
     runs-on: self-hosted
     defaults:
       run:
-        shell: '"C:\Program Files\Git\bin\bash.exe" --noprofile --norc -e -o pipefail {0}'
+        shell: pwsh
     steps:
       - uses: actions/checkout@v4
       - name: Run review
         run: |
-          REVIEW=$(claude --print "Review PR #${{ github.event.pull_request.number }}: \
-          check the diff at origin/${{ github.head_ref }} for bugs, \
-          missing tests, and refactoring opportunities.")
-          gh pr comment ${{ github.event.pull_request.number }} --body "$REVIEW"
+          $review = claude --print "Review PR #${{ github.event.pull_request.number }}: check the diff at origin/${{ github.head_ref }} for bugs, missing tests, and refactoring opportunities."
+          gh pr comment ${{ github.event.pull_request.number }} --body $review
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
