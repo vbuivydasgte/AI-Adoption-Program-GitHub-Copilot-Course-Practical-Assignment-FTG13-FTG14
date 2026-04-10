@@ -1,0 +1,18 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Claude Code Review
+        uses: anthropic-ai/claude-code-action@beta
+        with:
+          use_bedrock: false
