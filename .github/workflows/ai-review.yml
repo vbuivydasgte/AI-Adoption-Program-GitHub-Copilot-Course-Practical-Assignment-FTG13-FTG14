@@ -27,13 +27,12 @@ jobs:
 
       - name: Run review
         run: |
-          $diff = & git diff HEAD~1 HEAD
-          if (-not $diff) {
+          & git diff HEAD~1 HEAD | Out-File -FilePath diff.txt -Encoding utf8
+          $diffContent = Get-Content diff.txt -Raw
+          if (-not $diffContent) {
             Write-Host "No diff found, exiting"
             exit 0
           }
-          $diff | Out-File -FilePath diff.txt -Encoding utf8
-          $diffContent = Get-Content diff.txt -Raw
           $prompt = "Review ONLY these changes in this PR diff and nothing else. Here is the diff:`n$diffContent`n`nFind bugs, missing tests, and refactoring opportunities only in the changed lines."
           $review = & claude --print $prompt
           $review | Out-File -FilePath review.txt -Encoding utf8
