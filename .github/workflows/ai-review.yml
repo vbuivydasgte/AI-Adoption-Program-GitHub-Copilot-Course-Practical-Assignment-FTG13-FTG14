@@ -16,18 +16,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Debug git
+
+      - name: Get diff
         run: |
-          Write-Host "Git location:"
-          where.exe git
-          Write-Host "Git version:"
-          & git --version
-          Write-Host "Git diff:"
-          & git diff HEAD~1 HEAD
+          & git diff HEAD~1 HEAD | Out-File -FilePath diff.txt -Encoding utf8
+          Write-Host "Diff written, size:"
+          (Get-Item diff.txt).Length
 
       - name: Run review
         run: |
-          & git diff HEAD~1 HEAD | Out-File -FilePath diff.txt -Encoding utf8
           $diffContent = Get-Content diff.txt -Raw
           if (-not $diffContent) {
             Write-Host "No diff found, exiting"
