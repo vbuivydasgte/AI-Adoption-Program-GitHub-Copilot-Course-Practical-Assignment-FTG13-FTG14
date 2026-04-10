@@ -30,8 +30,9 @@ jobs:
             Write-Host "No diff found, exiting"
             exit 0
           }
-          $prompt = "Review ONLY these changes in this PR diff and nothing else. Here is the diff:`n$diffContent`n`nFind bugs, missing tests, and refactoring opportunities only in the changed lines."
-          $review = & claude --print $prompt
+          $header = "Review ONLY these changes in this PR diff. Find bugs, missing tests, and refactoring opportunities only in the changed lines. Diff:"
+          "$header`n`n$diffContent" | Out-File -FilePath prompt.txt -Encoding utf8
+          $review = Get-Content prompt.txt -Raw | & claude --print -
           $review | Out-File -FilePath review.txt -Encoding utf8
           gh pr comment ${{ github.event.pull_request.number }} --body-file review.txt
         env:
