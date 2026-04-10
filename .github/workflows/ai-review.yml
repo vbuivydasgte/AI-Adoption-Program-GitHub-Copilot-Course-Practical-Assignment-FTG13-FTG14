@@ -1,3 +1,8 @@
+name: AI Code Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
 jobs:
   review:
     runs-on: self-hosted
@@ -8,7 +13,6 @@ jobs:
           REVIEW=$(claude --print "Review PR #${{ github.event.pull_request.number }}: \
           check the diff at origin/${{ github.head_ref }} for bugs, \
           missing tests, and refactoring opportunities.")
-
           gh pr comment ${{ github.event.pull_request.number }} --body "$REVIEW"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
