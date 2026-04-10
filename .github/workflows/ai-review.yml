@@ -1,18 +1,13 @@
-name: AI Code Review
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-
 jobs:
   review:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run Claude Code Review
-        uses: anthropic-ai/claude-code-action@beta
-        with:
-          use_bedrock: false
+      - uses: actions/checkout@v4
+      - name: Run review
+        run: |
+          claude --print "Review PR #${{ github.event.pull_request.number }}: \
+          check the diff at origin/${{ github.head_ref }} for bugs, \
+          missing tests, and refactoring opportunities. \
+          Post findings as a comment."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
