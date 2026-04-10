@@ -6,6 +6,9 @@ on:
 jobs:
   review:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - name: Run review
