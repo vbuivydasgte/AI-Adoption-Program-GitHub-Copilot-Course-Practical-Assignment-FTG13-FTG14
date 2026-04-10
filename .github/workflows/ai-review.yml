@@ -13,7 +13,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run review
         run: |
-          $review = claude --print "Review PR #${{ github.event.pull_request.number }}: check the diff at origin/${{ github.head_ref }} for bugs, missing tests, and refactoring opportunities."
+          $prompt = "Review PR #${{ github.event.pull_request.number }}: check the diff at origin/${{ github.head_ref }} for bugs, missing tests, and refactoring opportunities."
+          $review = claude --print $prompt
           gh pr comment ${{ github.event.pull_request.number }} --body $review
+        shell: powershell
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
