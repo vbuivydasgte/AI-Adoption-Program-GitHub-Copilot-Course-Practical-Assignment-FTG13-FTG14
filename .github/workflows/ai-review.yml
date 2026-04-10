@@ -6,6 +6,9 @@ on:
 jobs:
   review:
     runs-on: self-hosted
+    permissions:
+      pull-requests: write
+      contents: read
     defaults:
       run:
         shell: powershell
