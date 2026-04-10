@@ -20,7 +20,9 @@ const AdminProductsPage = () => {
     errorMessage: "Failed to load products",
   });
   const [showForm, setShowForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState<number | null>(null);
   const [name, setName] = useState("");
   const [sku, setSku] = useState("");
   const [description, setDescription] = useState("");
@@ -56,6 +58,76 @@ const AdminProductsPage = () => {
     }
   };
 
+  const handleEditClick = (product: Product) => {
+    setEditingProduct(product);
+    setName(product.name);
+    setSku(product.sku);
+    setDescription(product.description || "");
+    setShowForm(false);
+    setError("");
+  };
+
+  const handleUpdate = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+
+    const validation = validateProduct({ name, sku, description });
+    if (!validation.isValid) {
+      const errorMessages = Object.values(validation.errors).join(", ");
+      setError(errorMessages);
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError("");
+      await productService.update(editingProduct.id, {
+        name,
+        sku,
+        description: description || undefined,
+      });
+      setEditingProduct(null);
+      setName("");
+      setSku("");
+      setDescription("");
+      await loadProducts();
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to update product"));
+      console.error(err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (product: Product) => {
+    if (
+      !globalThis.confirm(
+        `Delete product "${product.name}"? This action cannot be undone.`,
+      )
+    )
+      return;
+
+    try {
+      setDeleting(product.id);
+      setError("");
+      await productService.delete(product.id);
+      await loadProducts();
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to delete product"));
+      console.error(err);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingProduct(null);
+    setName("");
+    setSku("");
+    setDescription("");
+    setError("");
+  };
+
   const {
     sortedData: sortedProducts,
     handleSort,
@@ -72,6 +144,28 @@ const AdminProductsPage = () => {
       header: "Description",
       field: "description",
       render: (value) => value || "-",
+    },
+    {
+      header: "Actions",
+      field: "id",
+      sortable: false,
+      render: (_, row) => (
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button
+            onClick={() => handleEditClick(row)}
+            className={`${styles.button} ${styles.buttonStandard} ${styles.buttonPrimary}`}
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDelete(row)}
+            disabled={deleting === row.id}
+            className={`${styles.button} ${styles.buttonStandard} ${styles.buttonDanger} ${deleting === row.id ? styles.buttonDisabled : ""}`}
+          >
+            {deleting === row.id ? "Deleting..." : "Delete"}
+          </button>
+        </div>
+      ),
     },
   ];
 
@@ -101,14 +195,16 @@ const AdminProductsPage = () => {
 
       {error && <p className={styles.errorAlert}>{error}</p>}
 
-      <button
-        onClick={() => setShowForm((prev) => !prev)}
-        className={`${styles.button} ${styles.buttonWide} ${styles.buttonSuccess} ${styles.buttonTop}`}
-      >
-        {showForm ? "Cancel" : "+ Add New Product"}
-      </button>
+      {!editingProduct && (
+        <button
+          onClick={() => setShowForm((prev) => !prev)}
+          className={`${styles.button} ${styles.buttonWide} ${styles.buttonSuccess} ${styles.buttonTop}`}
+        >
+          {showForm ? "Cancel" : "+ Add New Product"}
+        </button>
+      )}
 
-      {showForm && (
+      {showForm && !editingProduct && (
         <form
           onSubmit={handleCreate}
           className={`${styles.section} ${styles.formGrid}`}
@@ -141,6 +237,52 @@ const AdminProductsPage = () => {
           >
             {submitting ? "Saving..." : "Save Product"}
           </button>
+        </form>
+      )}
+
+      {editingProduct && (
+        <form
+          onSubmit={handleUpdate}
+          className={`${styles.section} ${styles.formGrid}`}
+        >
+          <h3 className={styles.formTitle}>Editing: {editingProduct.name}</h3>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Name"
+            required
+            className={styles.field}
+          />
+          <input
+            value={sku}
+            onChange={(e) => setSku(e.target.value)}
+            placeholder="SKU"
+            required
+            className={styles.field}
+          />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
+            rows={3}
+            className={styles.field}
+          />
+          <div style={{ display: "flex", gap: "0.75rem" }}>
+            <button
+              type="submit"
+              disabled={submitting}
+              className={`${styles.button} ${styles.buttonWide} ${styles.buttonPrimary} ${submitting ? styles.buttonDisabled : ""}`}
+            >
+              {submitting ? "Saving..." : "Update Product"}
+            </button>
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className={`${styles.button} ${styles.buttonWide} ${styles.buttonDanger}`}
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       )}
 

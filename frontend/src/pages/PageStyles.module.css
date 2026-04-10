@@ -63,6 +63,10 @@
   background: #27ae60;
 }
 
+.buttonDanger {
+  background: #e74c3c;
+}
+
 .buttonTop {
   margin-top: 1rem;
 }
