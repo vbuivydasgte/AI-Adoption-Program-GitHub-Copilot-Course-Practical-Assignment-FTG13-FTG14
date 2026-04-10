@@ -5,9 +5,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run review
         run: |
-          claude --print "Review PR #${{ github.event.pull_request.number }}: \
+          REVIEW=$(claude --print "Review PR #${{ github.event.pull_request.number }}: \
           check the diff at origin/${{ github.head_ref }} for bugs, \
-          missing tests, and refactoring opportunities. \
-          Post findings as a comment."
+          missing tests, and refactoring opportunities.")
+
+          gh pr comment ${{ github.event.pull_request.number }} --body "$REVIEW"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
