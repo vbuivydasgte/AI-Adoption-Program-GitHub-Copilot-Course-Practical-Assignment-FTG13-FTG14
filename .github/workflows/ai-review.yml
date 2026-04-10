@@ -16,14 +16,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-    run: |
-      $diff = git diff origin/main...HEAD
-      $diff | Out-File -FilePath diff.txt -Encoding utf8
-      $diffContent = Get-Content diff.txt -Raw
-      $prompt = "Review ONLY these changes in this PR diff and nothing else. Do not comment on existing code outside this diff. Here is the diff:`n$diffContent`n`nFind bugs, missing tests, and refactoring opportunities only in the changed lines."
-      $review = claude --print $prompt
-      $review | Out-File -FilePath review.txt -Encoding utf8
-      gh pr comment ${{ github.event.pull_request.number }} --body-file review.txt
-    shell: powershell
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run review
+        run: |
+          $diff = git diff origin/main...HEAD
+          $diff | Out-File -FilePath diff.txt -Encoding utf8
+          $diffContent = Get-Content diff.txt -Raw
+          $prompt = "Review ONLY these changes in this PR diff and nothing else. Do not comment on existing code outside this diff. Here is the diff:`n$diffContent`n`nFind bugs, missing tests, and refactoring opportunities only in the changed lines."
+          $review = claude --print $prompt
+          $review | Out-File -FilePath review.txt -Encoding utf8
+          gh pr comment ${{ github.event.pull_request.number }} --body-file review.txt
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
