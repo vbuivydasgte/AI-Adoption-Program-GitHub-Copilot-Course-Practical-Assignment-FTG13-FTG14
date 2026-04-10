@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
       - name: Run review
         run: |
-          $diff = & git diff origin/main...HEAD
+          $diff = & git diff origin/main..HEAD
           if (-not $diff) {
             Write-Host "No diff found, exiting"
             exit 0
